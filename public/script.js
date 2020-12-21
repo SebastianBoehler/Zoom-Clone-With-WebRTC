@@ -21,13 +21,16 @@ navigator.mediaDevices.getUserMedia({
     })
   })
 
+  //other users join room
   socket.on('user-connected', userId => {
+    console.log('user connected', userId)
     connectToNewUser(userId, stream)
   })
 })
 
 socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
+  console.log('user disconnected')
 })
 
 myPeer.on('open', id => {
@@ -35,8 +38,10 @@ myPeer.on('open', id => {
 })
 
 function connectToNewUser(userId, stream) {
+  console.log('connect to new user and stream')
   const call = myPeer.call(userId, stream)
-  const video = document.createElement('video')
+  let video = document.createElement('video')
+  video.setAttribute('userID', userId)
   call.on('stream', userVideoStream => {
     addVideoStream(video, userVideoStream)
   })
